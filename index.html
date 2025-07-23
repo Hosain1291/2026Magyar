@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026년 헝가리 총선</title>
+
+    <!-- Tailwind CSS for basic structure -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Wanted Sans Font */
+        @import url('https://fastly.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
+
+        /* Global Styles */
+        body {
+            font-family: 'Wanted Sans Variable', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        
+        /* Blurred background image */
+        .background-image-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://contentf5.dailynewshungary.com/wp-content/uploads/2017/02/DSZZS20170220002.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px) grayscale(50%);
+            transform: scale(1.1);
+            z-index: -1;
+        }
+
+        /* Main container */
+        .content-wrapper {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        /* Party input cards */
+        .party-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .party-card {
+            width: 100%;
+            height: 130px;
+            border-radius: 12px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            text-align: center;
+            padding: 0.5rem;
+            font-weight: 600;
+        }
+
+        .party-card input {
+            font-family: 'Wanted Sans Variable', sans-serif;
+            font-weight: 800;
+            width: 70px;
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 0.25rem 0;
+            border-radius: 4px;
+            border: none;
+            padding: 4px;
+            color: rgba(255, 255, 255, 0.9);
+            background-color: transparent;
+            border-bottom: 2px solid rgba(255,255,255,0.5);
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .party-card input:focus {
+            color: white;
+            border-bottom-color: white;
+            outline: none;
+        }
+        
+        .party-card small {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            line-height: 1.2;
+            font-weight: 400;
+        }
+
+        /* Calculate Button */
+        .calculate-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: #FF6600; /* Fidesz Orange */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .calculate-button:hover {
+            background: #cc5200;
+        }
+
+        /* Results Section */
+        .results-container {
+            margin-top: 2.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            visibility: hidden;
+        }
+        .results-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        .seat-projection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .projection-party-card {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
+            padding: 10px;
+            font-weight: 600;
+        }
+
+        .projection-party-name { 
+            font-size: 1.1em;
+            margin-bottom: 5px; 
+        }
+        .projection-seats { 
+            font-size: 2.5em; 
+            line-height: 1; 
+            font-weight: 800;
+        }
+
+        /* Bar Chart */
+        .seat-bar-container {
+            width: 100%;
+            height: 30px;
+            background-color: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 2rem;
+            display: flex;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        .seat-bar-segment {
+            height: 100%;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image-blur"></div>
+    <div class="content-wrapper">
+        <h2>🗳️ 2026년 헝가리 총선</h2>
+
+        <div class="party-grid" id="partyGrid">
+            <!-- Party input cards will be rendered here by JS -->
+        </div>
+
+        <button class="calculate-button" onclick="runPrediction()">결과 계산</button>
+
+        <div id="resultsContainer" class="results-container">
+            <h2 id="resultsTitle" style="font-size: 1.5rem;">예상 의석수 (총 199석)</h2>
+            <div class="seat-projection-grid" id="seatProjectionGrid"></div>
+            <div class="seat-bar-container" id="seatBarContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const PARTIES = {
+            'fidesz': { name: '피데스', color: '#FF6600' },
+            'dk': { name: '민주연합', color: '#004A99' },
+            'mszp': { name: '사회당', color: '#C8102E' },
+            'lmp': { name: '녹색당', color: '#3EB449' },
+            'momentum': { name: '모멘툼', color: '#7B4298' },
+            'jobbik': { name: '요비크', color: '#008080' },
+            'mmm': { name: 'MMM', color: '#002C5B' },
+            'mh': { name: '우리 조국', color: '#78866B' },
+            'mkkp': { name: '두 개의 꼬리를 가진 개의 당', color: '#A9A9A9' },
+            'np': { name: '인민의 편', color: '#003366' },
+            '2rk': { name: '제2개혁시대', color: '#FFD700' },
+            'tisza': { name: '티서당', color: '#E31B23' }
+        };
+        
+        const CONSTITUENCY_SEATS = 106;
+        const PROPORTIONAL_SEATS = 93;
+        const TOTAL_SEATS = CONSTITUENCY_SEATS + PROPORTIONAL_SEATS;
+        const ELECTION_THRESHOLD = 5.0; // 5%
+
+        // Based on recent polling trends
+        const INITIAL_VOTE_SHARES = { 
+            fidesz: 45, 
+            dk: 10, 
+            mszp: 4, 
+            lmp: 3, 
+            momentum: 4,
+            jobbik: 2,
+            mmm: 1,
+            mh: 6,
+            mkkp: 5,
+            np: 1,
+            '2rk': 1,
+            tisza: 18
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPartyCards();
+        });
+
+        // --- UI SETUP ---
+        function renderPartyCards() {
+            const grid = document.getElementById("partyGrid");
+            grid.innerHTML = "";
+            Object.keys(PARTIES).forEach(key => {
+                const party = PARTIES[key];
+                const card = document.createElement("div");
+                card.className = "party-card";
+                card.style.backgroundColor = party.color;
+                
+                if (['2rk', 'mkkp'].includes(key)) {
+                    card.style.color = '#333';
+                    card.innerHTML = `<div>${party.name}</div><input type="number" id="${key}-vote" value="${INITIAL_VOTE_SHARES[key]}" step="0.1" style="color: #333; border-bottom-color: rgba(0,0,0,0.4);"><small>득표율(%)</small>`;
+                } else {
+                    card.innerHTML = `<div>${party.name}</div><input type="number" id="${key}-vote" value="${INITIAL_VOTE_SHARES[key]}" step="0.1"><small>득표율(%)</small>`;
+                }
+                grid.appendChild(card);
+            });
+        }
+        
+        function allocateSeats(voteShares, numSeats) {
+            const seats = {};
+            const remainders = {};
+            let allocatedSeats = 0;
+            const totalVotes = Object.values(voteShares).reduce((a, b) => a + b, 0);
+
+            if (totalVotes === 0) return seats;
+
+            Object.keys(voteShares).forEach(key => {
+                const exactSeats = (voteShares[key] / totalVotes) * numSeats;
+                seats[key] = Math.floor(exactSeats);
+                remainders[key] = exactSeats - seats[key];
+                allocatedSeats += seats[key];
+            });
+
+            let remainingSeats = numSeats - allocatedSeats;
+            if (remainingSeats > 0) {
+                const sortedRemainders = Object.keys(remainders).sort((a, b) => remainders[b] - remainders[a]);
+                for (let i = 0; i < remainingSeats; i++) {
+                    seats[sortedRemainders[i]]++;
+                }
+            }
+            return seats;
+        }
+
+        // --- CORE LOGIC & UI UPDATE ---
+        function runPrediction() {
+            const currentShares = {};
+            Object.keys(PARTIES).forEach(key => {
+                currentShares[key] = parseFloat(document.getElementById(`${key}-vote`).value) || 0;
+            });
+
+            const finalSeats = {};
+            Object.keys(PARTIES).forEach(key => { finalSeats[key] = 0; });
+
+            // --- Step 1: Proportional Representation Seats (93 seats) ---
+            const eligibleParties = {};
+            Object.keys(currentShares).forEach(key => {
+                if (currentShares[key] >= ELECTION_THRESHOLD) {
+                    eligibleParties[key] = currentShares[key];
+                }
+            });
+            const proportionalSeats = allocateSeats(eligibleParties, PROPORTIONAL_SEATS);
+            Object.keys(proportionalSeats).forEach(key => {
+                finalSeats[key] += proportionalSeats[key];
+            });
+
+            // --- Step 2: Constituency Seats (106 seats) ---
+            const constituencyVotePool = { ...currentShares };
+            // Simulate Fidesz's structural advantage in single-member districts
+            const fideszAdvantageMultiplier = 1.5; 
+            constituencyVotePool['fidesz'] *= fideszAdvantageMultiplier;
+
+            const constituencySeats = allocateSeats(constituencyVotePool, CONSTITUENCY_SEATS);
+            Object.keys(constituencySeats).forEach(key => {
+                finalSeats[key] += constituencySeats[key];
+            });
+
+            // --- Step 3: Update UI ---
+            const resultsContainer = document.getElementById('resultsContainer');
+            const seatProjectionGrid = document.getElementById('seatProjectionGrid');
+            const seatBarContainer = document.getElementById('seatBarContainer');
+            seatProjectionGrid.innerHTML = '';
+            seatBarContainer.innerHTML = '';
+
+            const sortedParties = Object.keys(finalSeats).sort((a,b) => finalSeats[b] - finalSeats[a]);
+
+            sortedParties.forEach(key => {
+                const party = PARTIES[key];
+                const seats = finalSeats[key];
+                if (seats === 0) return;
+                
+                const resultCard = document.createElement("div");
+                resultCard.className = "projection-party-card";
+                resultCard.style.backgroundColor = party.color;
+                if (['2rk', 'mkkp'].includes(key)) resultCard.style.color = '#333';
+
+                resultCard.innerHTML = `<div class="projection-party-name">${party.name}</div><div class="projection-seats">${seats}</div>`;
+                seatProjectionGrid.appendChild(resultCard);
+
+                const segment = document.createElement('div');
+                segment.className = 'seat-bar-segment';
+                segment.style.backgroundColor = party.color;
+                segment.style.width = `${(seats / TOTAL_SEATS) * 100}%`;
+                
+                seatBarContainer.appendChild(segment);
+            });
+            
+            resultsContainer.classList.add('visible');
+        }
+    </script>
+</body>
+</html>
